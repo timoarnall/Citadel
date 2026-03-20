@@ -1,6 +1,12 @@
 # Citadel
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js 18+](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-compatible-blueviolet.svg)](https://docs.anthropic.com/en/docs/claude-code)
+
 An agent orchestration system for [Claude Code](https://claude.ai/claude-code). Route any task through the right tool at the right scale — from a one-line fix to a multi-day parallel campaign.
+
+**13 skills | 3 autonomous agents | 8 lifecycle hooks | campaign persistence | fleet coordination | telemetry**
 
 Built from running 198 autonomous agents across 32 parallel sessions on a production codebase. 27 postmortems worth of lessons baked into every hook and skill.
 
@@ -241,6 +247,20 @@ npm run telemetry:report -- --compression # Discovery compression ratios
 Archon and Fleet log campaign start/complete, wave events, and per-agent results automatically. Hooks log their own timing on every invocation.
 
 Token counts are logged when available. Claude Code doesn't currently surface per-session token usage to hooks, so cost tracking depends on your plan's usage dashboard.
+
+---
+
+## When to Use Citadel
+
+Citadel scales down to a typo fix and up to a multi-day parallel campaign. You don't need to use every tier. Most tasks route to a Skill or Marshal automatically. Archon and Fleet are there when your project grows into them.
+
+If you're just starting with Claude Code and don't have a project yet, start with the basics first and come back when you're ready for structure. If you already have a codebase and want your agent to work smarter — even on simple tasks — install Citadel and let `/do` handle the routing.
+
+---
+
+## Relationship to Superpowers
+
+[Superpowers](https://github.com/obra/superpowers) teaches your agent good methodology — brainstorm before coding, write tests first, review before shipping. Citadel gives it the infrastructure to execute that methodology at scale: campaign persistence across sessions, fleet coordination across parallel agents, lifecycle hooks that enforce quality automatically, and telemetry that tracks what happened. They are complementary. Use Superpowers for the workflow discipline. Use Citadel when your work outgrows a single session.
 
 ---
 
