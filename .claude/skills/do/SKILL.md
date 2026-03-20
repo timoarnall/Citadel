@@ -85,6 +85,11 @@ frontmatter for name and description.
 | "scaffold", "new module", "new component", "bootstrap" | `/scaffold` |
 | "create skill", "new skill", "repeated pattern" | `/create-skill` |
 | "handoff", "session summary" | `/session-handoff` |
+| "orchestrate", "chain skills", "multi-step" | `/marshal` |
+| "campaign", "multi-session", "phases" | `/archon` |
+| "parallel", "simultaneous", "multiple agents" | `/fleet` |
+| "intake", "process pending", "pipeline" | `/autopilot` |
+| "setup", "first run", "configure harness" | `/setup` |
 
 If ONE skill matches with high confidence → invoke it directly. Done.
 If MULTIPLE skills match → fall through to Tier 3.
@@ -174,6 +179,7 @@ SKILLS
 
 UTILITIES
   /session-handoff      Session context transfer
+  /setup                First-run harness configuration
 
 Direct invocation (/skill-name) always bypasses the router.
 ```

@@ -47,7 +47,7 @@ function parseArgs(argv) {
 // ── Section Extractors ───────────────────────────────────────────────────────
 
 function extractHandoff(text) {
-  const match = text.match(/---\s*HANDOFF\s*---\s*\n([\s\S]*?)(?:\n---|\Z)/i);
+  const match = text.match(/---\s*HANDOFF\s*---\s*\n([\s\S]*?)(?:\n---|$)/i);
   if (!match) return null;
   return match[1].trim().split('\n')
     .map(l => l.replace(/^[-*]\s*/, '').trim())

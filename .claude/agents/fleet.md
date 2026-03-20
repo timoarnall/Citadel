@@ -142,4 +142,9 @@ Context usage: {estimate}
 2. Run tests if configured
 3. Update session status to `completed`
 4. Write final HANDOFF summary
-5. Log to telemetry
+5. Log telemetry events:
+   - Session start: `node scripts/telemetry-log.cjs --event campaign-start --agent fleet --session {session-slug}`
+   - Each wave: `node scripts/telemetry-log.cjs --event wave-start --agent fleet --session {session-slug} --meta '{"wave":N,"agents":["name1","name2"]}'`
+   - Wave results: `node scripts/telemetry-log.cjs --event wave-complete --agent fleet --session {session-slug} --meta '{"wave":N,"status":"complete"}'`
+   - Per-agent: `node scripts/telemetry-log.cjs --event agent-complete --agent {agent-name} --session {session-slug} --status {success|partial|failed}`
+   - Session end: `node scripts/telemetry-log.cjs --event campaign-complete --agent fleet --session {session-slug}`
