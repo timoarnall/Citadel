@@ -223,6 +223,65 @@ Also check `.planning/coordination/claims/` for external claims.
 - Merge conflicts must be resolved or explicitly recorded
 - Final typecheck must pass after all waves
 
+## Agent Timeouts
+
+Sub-agents can hang indefinitely on tool calls (e.g., WebFetch on a massive page).
+The circuit breaker catches tool *failures* but not tool *hangs*. Fleet must enforce
+execution time limits at the orchestrator level.
+
+### Default Timeouts
+
+| Agent Type | Default Timeout | Override Key |
+|---|---|---|
+| Skill-level agents | 10 minutes | `agentTimeouts.skill` |
+| Research scouts | 15 minutes | `agentTimeouts.research` |
+| Build agents | 30 minutes | `agentTimeouts.build` |
+
+Timeouts are configurable in `harness.json`:
+```json
+{
+  "agentTimeouts": {
+    "skill": 600000,
+    "research": 900000,
+    "build": 1800000
+  }
+}
+```
+
+### Timeout Protocol
+
+When spawning each agent, set the timeout on the Agent tool call. If an agent
+exceeds its timeout:
+
+1. **Log the timeout**: Record in telemetry with the agent's instance ID, assigned
+   scope, and elapsed time
+   ```bash
+   node scripts/telemetry-log.cjs --event agent-timeout --agent {instance-id} --session {session-slug} --meta '{"scope":"{scope}","elapsed_ms":{ms}}'
+   ```
+2. **Check for partial output**: Read the agent's output file. If it contains
+   a partial HANDOFF or usable findings, extract them.
+3. **Decide: retry or skip**:
+   - If this is Wave 1 and the agent's scope is critical → retry once with a
+     simplified prompt (remove WebFetch instructions, reduce scope)
+   - If this is a research scout → skip and proceed with other scouts' results
+   - If retry also times out → skip, log, and continue
+4. **Never block the wave**: One hung agent must not prevent other agents' results
+   from being processed. Collect results from completed agents and proceed.
+5. **Record in session file**: Add a `**Status:** timed out` entry for the agent
+   with the timeout duration and whether retry was attempted.
+
+### Reading Timeouts from Config
+
+```javascript
+const config = JSON.parse(fs.readFileSync('.claude/harness.json', 'utf8'));
+const timeouts = config.agentTimeouts || {};
+const skillTimeout = timeouts.skill || 600000;    // 10 min default
+const researchTimeout = timeouts.research || 900000; // 15 min default
+const buildTimeout = timeouts.build || 1800000;    // 30 min default
+```
+
+Match agent type to timeout based on the work queue's "Agent type" column.
+
 ## Coordination Safety
 
 ### Instance ID Generation

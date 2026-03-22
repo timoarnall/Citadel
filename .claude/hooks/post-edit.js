@@ -75,8 +75,21 @@ function typeCheck(filePath, relativePath) {
   const language = config.language || 'unknown';
   const typecheckConfig = config.typecheck || {};
 
-  // No typecheck configured
+  // No typecheck configured — skip gracefully
   if (!typecheckConfig.command) {
+    // Log once per session so beginners know setup is available
+    const notifiedFlag = path.join(PROJECT_ROOT, '.planning', 'telemetry', '.typecheck-notified');
+    if (language === 'unknown' && !fs.existsSync(notifiedFlag)) {
+      try {
+        const telemetryDir = path.dirname(notifiedFlag);
+        if (fs.existsSync(telemetryDir)) {
+          fs.writeFileSync(notifiedFlag, Date.now().toString());
+          process.stdout.write('[typecheck] No typecheck configured. Run /do setup to enable per-edit type checking.');
+        }
+      } catch {
+        // Silently skip if we can't write the flag
+      }
+    }
     return 0;
   }
 

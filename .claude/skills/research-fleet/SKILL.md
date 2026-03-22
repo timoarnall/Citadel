@@ -138,6 +138,26 @@ Also log to `.planning/telemetry/agent-runs.jsonl`:
 - Maximum 2 waves (if Wave 2 doesn't resolve it, the question needs human judgment)
 - Each scout follows /research quality gates (sources, confidence, evidence)
 - Scout findings are independent. No scout reads another scout's output during the same wave.
+- **Scout timeout: 15 minutes** (configurable via `harness.json` `agentTimeouts.research`).
+  If a scout exceeds its timeout, skip it and proceed with other scouts' results.
+  A timed-out scout's angle becomes a "Gap" in the final report.
+
+### WebFetch Restrictions
+
+Every scout prompt MUST include this instruction:
+
+> **Do NOT use WebFetch on GitHub repository pages** (github.com/{user}/{repo}).
+> These pages are massive HTML documents (500KB+) that hang the fetcher indefinitely.
+> Instead:
+> - Use **WebSearch** to find information about repos (search snippets contain what you need)
+> - If you need a repo's README content, fetch the **raw** URL:
+>   `https://raw.githubusercontent.com/{user}/{repo}/{branch}/README.md`
+> - Never fetch rendered GitHub pages: issues, pull requests, repo root, or file views
+
+This restriction exists because a real research-fleet run hung for 38+ minutes
+on `WebFetch(https://github.com/jehna/readme-best-practices)` with zero output.
+The circuit breaker didn't catch it because the tool didn't *fail* — it just
+never completed.
 
 ## Quality Gates
 

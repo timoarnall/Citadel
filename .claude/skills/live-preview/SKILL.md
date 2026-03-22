@@ -44,7 +44,10 @@ Determine what needs visual verification:
 
 1. Check which files were modified in the current session/phase
 2. Filter to view-layer files (.tsx, .jsx, .vue, .svelte, .html, .css)
-3. Map each modified file to a route or URL where it renders:
+3. **If no view-layer files found**: exit early with message
+   "No view-layer files modified. Nothing to preview." Skip Steps 2-5.
+   This is expected for non-UI repos (CLI tools, libraries, agent harnesses).
+4. Map each modified file to a route or URL where it renders:
    - If the project has a route manifest or sitemap, use it
    - If the project has a dev server, identify which routes render the modified components
    - If you can't determine the route, ask the user
